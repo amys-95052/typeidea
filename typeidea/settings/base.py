@@ -30,13 +30,18 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+INSTALLED_APPS = [    # 根据APP顺序查找对应的static和template
+    'blog',
+    'config',
+    'comment',
+
+    'django.contrib.admin',   # admin管理
+    'django.contrib.auth',    # 身份认证系统
+    'django.contrib.contenttypes',  # 内容类型框架
+    'django.contrib.sessions',     # 会话框架
+    'django.contrib.messages',     # 消息框架
+    'django.contrib.staticfiles',   # 静态文件管理框架
+
 ]
 
 MIDDLEWARE = [

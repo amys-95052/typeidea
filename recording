@@ -11,4 +11,25 @@
     profile = os.environ.get('TYPEIDEA_PROFILE','develop')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings.%s' % profile)
     #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings')
+3.编写model层代码
+    直接使用models中User Model
+    django APP 应用内部的所有逻辑都是相关联的，自组织的应用
+    把所有model分成三类:blog相关、配置相关和评论相关
+
+4.执行python manage.py makemigration  创建迁移文件
+    之后执行python manage.py migrate   执行迁移文件
+
+【问题】
+1.github上传时出现error: src refspec master does not match any解决办法
+    常见原因：本地git仓库目录下为空，没有都很么要提交的；
+    第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；
+    第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
+2.Django —— ORM定义外键报错：TypeError: __init__() missing 1 required positional argument: 'on_delete'
+    在ForeignKey中添加语句
+        publisher_id = models.ForeignKey(to="Publisher", on_delete=models.CASCADE)
+3.执行python manage.py dbshell报错
+    下载sqlite3   https://sqlite.org/2020/sqlite-tools-win32-x86-3330000.zip
+    将sqlite3.exe文件放入（C:\Windwos\System32）中
+    执行python manage.py dbshell
+
 
