@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [    # 根据APP顺序查找对应的static和template
+    'typeidea',    # 所有的模板文件都放在typeidea，增加这个App
     'blog',
     'config',
     'comment',

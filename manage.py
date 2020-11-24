@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    profile = os.environ.get('TYPEIDEA_PROFILE','develop')
+    profile = os.environ.get('TYPEIDEA_PROFILE','develop')   # 读取环境变量TYPEIDEA_PROFILE来控制Django加载不同setting文件
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings.%s' % profile)
     #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings')
     try:

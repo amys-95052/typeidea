@@ -1,5 +1,13 @@
-1.拆分setting.py以满足不同环境的需求
-    在setting.py中对开发环境、测试环境和线上环境进行配置
+1.创建项目以及配置
+1.1 创建项目&组织requirements.txt
+    requirements.txt 放项目的依赖项
+    ‘’‘
+    -i http://pypti.doubanio.com/smiple/
+    Django~=3.0
+    -e .              # 表示从当前的setup.py中查找其他依赖项
+    ’‘’
+1.2 配置
+拆分setting.py以满足不同环境的需求
     将setting.py拆成一个package，不同的配置分别定义不同的模块
     将setting.py定义成基类，不同的配置定义为子类
     创建文件夹setting
@@ -7,17 +15,79 @@
     创建文件base.py    # 直接copy setting.py文件
     创建文件develop.py，product.py
         from .base import *   # 引入base中的所有配置
-2.修改manage.py和typeidea/wigs.py,django启动时需要知道setting文件，实现开发环境使用develop.py,线上环境使用product.py
+1.3.修改manage.py和typeidea/wigs.py,django启动时需要知道setting文件，实现开发环境使用develop.py,线上环境使用product.py
     profile = os.environ.get('TYPEIDEA_PROFILE','develop')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings.%s' % profile)
     #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings')
+
+
+OS module in Python provides functions for interacting with the operating system.
+OS comes under Python’s standard utility modules.
+This module provides a portable way of using operating system dependent functionality.
+os.environ in Python is a mapping object that represents the user’s environmental variables.
+It returns a dictionary having user’s environmental variable as key and their values as value.
+
 3.编写model层代码
-    直接使用models中User Model
-    django APP 应用内部的所有逻辑都是相关联的，自组织的应用
-    把所有model分成三类:blog相关、配置相关和评论相关
+    直接使用Django自带的models中User模型
+    APP应该是一个自组织的应用，应用内部的所有逻辑都是相关联的，紧密耦合的
+    Model的业务性质相同可以放如同一个APP，遵循以维护、易扩展原则
+    实列：
+        把所有model分成三类，blog相关、配置相关和评论相关，每一类对应一个APP
+3.1 创建APP
+    配置INSTALLED_APPS,Django会根据这些APP的顺序来查找对应资源，比如static、template
 
 4.执行python manage.py makemigration  创建迁移文件
     之后执行python manage.py migrate   执行迁移文件
+5.提交代码
+    git checkout add-blog-app-model  # 创建分支
+    git add.
+    git commit -m 'create model'
+    git checkout master     # 回到主分支
+    git merge add-blog-app-model    # 把分支合并
+
+【知识点】
+    ORM（Object Relational Mapping）对象关系映射
+        定义的类(对象)映射到对应的数据库的表上
+        将数据库和关系的抽象成一种代码层面的类
+        基本规则：model中字段的类型和MySQL中字段的类型相对应
+        SQL语句对数据做增删改查操作对应QuerySet
+    常用字段类型：这些类型都是python类
+        数值型
+        字符型
+        日期类型
+        关系类型：用来关联两张表
+    参数：类型对象实例化传递的参数
+    QuerySet使用
+        在Model层中，Django通过Model增加一个objects属性类提供数据操作的接口
+        支持链式调用
+            链式调用：执行一个对象的方法得到的还是这个对象的，这样还可以继续执行这个对象的其他方法
+        常用QuerySet接口
+            支持链式调用的接口
+            不支持链式调用的接口：返回的结果不是QuerySet对象
+        字段查询：select...from...
+        进阶查询：数据库层面进行计算
+        原生SQL的接口
+            Post.objects.raw('select * from blog')
+
+开发管理后台
+1.配置admin页面
+2.创建超级用户
+3.根据需求定制admin
+
+【知识点】
+    数据保存到数据库
+        save_model(self, request, obj, form, change)方法
+            obj 当前要保存的对象
+            request  当前请求
+
+
+开发面向用户的界面
+    1.分析URL
+    2.分析页面数据---》理清View逻辑，可以分成几类
+
+
+
+
 
 【问题】
 1.github上传时出现error: src refspec master does not match any解决办法
@@ -33,3 +103,10 @@
     执行python manage.py dbshell
 
 
+2.配置Git
+    git inti     # 创建一个本地仓库
+    git add .    # 将本地项目文件添加到Git仓库
+    git commit -m 'description'
+    # 配置远程仓库
+    git remote add origin <远程仓库地址>
+    git push -u origin master
