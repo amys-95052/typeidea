@@ -1,2 +1,2 @@
 # typeidea
-learn Django by blog project
+Learn Django by developing blog project
