@@ -1,0 +1,21 @@
+创建项目以及配置
+1.1 创建项目&组织requirements.txt
+    requirements.txt 放项目的依赖项
+    ‘’‘
+    -i http://pypti.doubanio.com/smiple/
+    Django~=3.0
+    -e .              # 表示从当前的setup.py中查找其他依赖项
+    ’‘’
+1.2 配置
+拆分setting.py以满足不同环境的需求
+    将setting.py拆成一个package，不同的配置分别定义不同的模块
+    将setting.py定义成基类，不同的配置定义为子类
+    创建文件夹setting
+    创建文件__init__.py
+    创建文件base.py    # 直接copy setting.py文件
+    创建文件develop.py，product.py
+        from .base import *   # 引入base中的所有配置
+1.3.修改manage.py和typeidea/wigs.py,django启动时需要知道setting文件，实现开发环境使用develop.py,线上环境使用product.py
+    profile = os.environ.get('TYPEIDEA_PROFILE','develop')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings.%s' % profile)
+    #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings')
