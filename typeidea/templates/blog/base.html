@@ -8,7 +8,7 @@
 <div> 顶部分类
     <br></br>
     {% for cate in navs %}
-    <a href = '/category/{{ cate.id }}'>{{ cate.name }}</a>
+    <a href = "{% url 'category-list' cate.id %}">{{ cate.name }}</a>
     {% endfor %}
 </div>
 
@@ -26,7 +26,7 @@
 <ul>
     {% for post in post_list %}
     <li>
-        <a href="/post/{{ post.id }}/">{{ post.title }}</a>
+        <a href="{% url 'post-detail' post.id %}">{{ post.title }}</a>
         <div>
             <span>作者：{{ post.owner.username }}</span>
             <br></br>
@@ -39,7 +39,7 @@
 <div> 底部分类
     <br></br>
     {% for cate in navs %}
-    <a href = '/category/{{ cate.id }}/'>{{ cate.name }}</a>
+    <a href = "{% url 'category-list' cate.id %}">{{ cate.name }}</a>
     {% endfor %}
 </div>
 </body>
