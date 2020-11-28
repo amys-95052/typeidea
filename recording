@@ -21,11 +21,19 @@
     #os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'typeidea.settings')
 
 
-OS module in Python provides functions for interacting with the operating system.
-OS comes under Python’s standard utility modules.
-This module provides a portable way of using operating system dependent functionality.
-os.environ in Python is a mapping object that represents the user’s environmental variables.
-It returns a dictionary having user’s environmental variable as key and their values as value.
+    OS module in Python provides functions for interacting with the operating system.
+    OS comes under Python’s standard utility modules.
+    This module provides a portable way of using operating system dependent functionality.
+    os.environ in Python is a mapping object that represents the user’s environmental variables.
+    It returns a dictionary having user’s environmental variable as key and their values as value.
+小结：
+1）requirements.txt 必要性和组织
+2）不同开发模式下的使用不同配置，方便开发
+3）OS模块
+
+
+
+
 
 3.编写model层代码
     直接使用Django自带的models中User模型
@@ -34,73 +42,122 @@ It returns a dictionary having user’s environmental variable as key and their 
     实列：
         把所有model分成三类，blog相关、配置相关和评论相关，每一类对应一个APP
 3.1 创建APP
+    APP添加到setting中INSTALLED_APPS配置项
     配置INSTALLED_APPS,Django会根据这些APP的顺序来查找对应资源，比如static、template
 
-4.执行python manage.py makemigration  创建迁移文件
+3.2 创建数据库
+    执行python manage.py makemigration  创建迁移文件
     之后执行python manage.py migrate   执行迁移文件
-5.提交代码
-    git checkout add-blog-app-model  # 创建分支
-    git add.
-    git commit -m 'create model'
-    git checkout master     # 回到主分支
-    git merge add-blog-app-model    # 把分支合并
 
-【知识点】
+3.3 创建模型
     ORM（Object Relational Mapping）对象关系映射
         定义的类(对象)映射到对应的数据库的表上
-        将数据库和关系的抽象成一种代码层面的类
-        基本规则：model中字段的类型和MySQL中字段的类型相对应
-        SQL语句对数据做增删改查操作对应QuerySet
-    常用字段类型：这些类型都是python类
+        将数据库表和关系的抽象成一种代码层面的类
+    基本规则：model中字段的类型和MySQL中字段的类型相对应
+            SQL语句对数据做增删改查操作对应QuerySet
+    具体实现
+        继承django的model，然后定义对应的字段
+        字段类型：
+            Model中的字段类型都是一个python类
+            根据需求配置参数，即类在实例化传递参数,有些参数与admin显示有关
+
+    常用字段类型：
         数值型
         字符型
         日期类型
         关系类型：用来关联两张表
-    参数：类型对象实例化传递的参数
-    QuerySet使用
+    数据库操作：QuerySet使用
         在Model层中，Django通过Model增加一个objects属性类提供数据操作的接口
         支持链式调用
             链式调用：执行一个对象的方法得到的还是这个对象的，这样还可以继续执行这个对象的其他方法
+            只有用到的时候才会DATABASE中取数据
         常用QuerySet接口
             支持链式调用的接口
-            不支持链式调用的接口：返回的结果不是QuerySet对象
-        字段查询：select...from...
-        进阶查询：数据库层面进行计算
+            不支持链式调用的接口：返回的结果不是QuerySet对象，一般获取的结果不是集合，而是一条记录对应的对象或者记录某些字段的值
+        进阶接口：
+            defer()/only()
+            一对多的关联关系 select_related()
+            多对多关系  prefetch——related()
+        常用的查询字段：
+            Model.objects.filter(_查询字段=‘查询条件’)
+        进阶查询：
+            F表达式:数据库层面进行计算原子性操作，避免数据库出现竞争，
+            Q表达式：构造查询条件
+            聚类表达式
+                Count
+                Sum
+                常常结合的两个操作：
+                    annotate：增加属性
+                    aggregate：直接计算
         原生SQL的接口
             Post.objects.raw('select * from blog')
-
-开发管理后台
-1.配置admin页面
-2.创建超级用户
-3.根据需求定制admin
-
-【知识点】
-    数据保存到数据库
-        save_model(self, request, obj, form, change)方法
-            obj 当前要保存的对象
-            request  当前请求
-
-
-开发面向用户的界面
-    1.分析URL
-    2.分析页面数据---》理清View逻辑，可以分成几类
+小结：
+1）模块划分以及APP创建原则
+２）创建模型具体实现
+3）字段类型和数据操作
 
 
 
 
+4.开发管理后台
+4.配置admin页面
+4.1创建Model对应的admin类
+    具体实现：
+         使用Model注册admin
+         继承admin.ModelAdmin
+         可以重写一些方法
+             save_model(self,request,obj,form,change)
+             # obj 表示当前要保存的对象，form表示提交过来的表单对象，change表示是本次保存的对象是更新还是添加
+         通过自定义函数增加想要展示字段
+            自定函数都是当前对象
+            使用属性short_description定义展示文案
+    根据需求自定义
+        定义列表页面
+        自定义过滤器
+        自定义Form实现更多定制内容
+        同一页面编辑关联数据：同一个页面实现两个关联模型编辑
+        site 一个站点对应一个site
+            继承django.contrib.admin.AdminSite来定义自己的site,将用户管理和数据管理分开
+        admin的权限逻辑
+            用户登录之后将权限从数据库中读出，保存到session或者缓存
+            权限变更时，用户需要退出后重新登陆
+4.3 抽象Admin基类
+    每个自定义的admin都拥有的业务逻辑和处理抽象成一个类,自定义的admin继承该类即可
 
-【问题】
-1.github上传时出现error: src refspec master does not match any解决办法
-    常见原因：本地git仓库目录下为空，没有都很么要提交的；
-    第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；
-    第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
-2.Django —— ORM定义外键报错：TypeError: __init__() missing 1 required positional argument: 'on_delete'
-    在ForeignKey中添加语句
-        publisher_id = models.ForeignKey(to="Publisher", on_delete=models.CASCADE)
-3.执行python manage.py dbshell报错
-    下载sqlite3   https://sqlite.org/2020/sqlite-tools-win32-x86-3330000.zip
-    将sqlite3.exe文件放入（C:\Windwos\System32）中
-    执行python manage.py dbshell
+4.4 日志
+    ModelAdmin本身就有日志记录功能：
+        创建一个Model实体时，会自动创建一条记录
+        修改时，调用LogEntry创建一条记录
+
+
+
+总结
+1）使用Model注册admin
+2）通过继承admin.ModelAdmin,就可以实现对这个Model的增删改查，在Model之上可以实现一些业务逻辑
+3）自定义过滤器，使用django提供的SimpleListFilter
+4）admin类在Model自定义实现一些有关数据的业务逻辑，要找到数据在那里生成，比如：save_model()获得提交过来的数据;get_queryset()返回列表页展示的数据
+5）每个自定义的admin都拥有的业务逻辑和处理抽象成一个类,自定义的admin继承该类即可
+
+5.开发面向用户的界面
+5.1 搭建基础结构
+    1.分析URL:存在多少中页面，每种页面对应一个URL
+    2.分析页面展示的数据：根据页面展示的数据，理清View逻辑，可以分成几类
+    3.配置模板
+5.2 配置页面通用数据
+    1.同一页面展示不同信息
+    2.重构view：把复杂部分抽象成一个函数，将获取数据的操作放到Model层
+    3.每个页面都要展示的数据
+5.3 不同的展示类型对应不同数据源：
+    1.在Model层实现数据获取和渲染数据到模板上，然后将渲染好的数据HTML数据放到其他页面
+    2.在模板中抽象独立的block，不同数据源需要在不同页面对应的Viwe层获取
+5.4 整理模板代码
+    1.抽象基础模板
+    2.解耦硬编码
+
+
+
+
+
 
 
 2.配置Git
@@ -110,3 +167,11 @@ It returns a dictionary having user’s environmental variable as key and their 
     # 配置远程仓库
     git remote add origin <远程仓库地址>
     git push -u origin master
+3.将代码提交到GitHub
+    创建分支：git checkout -b <branch>
+    提交代码：git add <file>
+            git commit -m 'description'
+    回到主枝：git checkout master
+    将分支合并：git merge <branch>
+    拉取：git push -u origin master
+    pull上去：git pull
